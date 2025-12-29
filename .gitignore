@@ -39,3 +39,7 @@ MANIFEST
 
 # Ruff
 .ruff_cache/
+
+# input and output files
+songs/input
+songs/output
