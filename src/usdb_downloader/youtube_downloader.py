@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import re
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Final, cast
@@ -15,7 +14,6 @@ class YoutubeDownloaderException(Exception):
 
 
 class YoutubeDownloader:
-    _ID_PATTERN: Final[re.Pattern[str]] = re.compile(r"(?:a=|v=)([A-Za-z0-9_-]{11})")
     _DEFAULT_COMMON_OPTS: Final[Mapping[str, Any]] = {
         "quiet": True,
         "no_warnings": True,
@@ -37,11 +35,6 @@ class YoutubeDownloader:
             }
         ],
     }
-
-    @classmethod
-    def extract_video_id(cls, line: str) -> str | None:
-        match = cls._ID_PATTERN.search(line)
-        return match.group(1) if match else None
 
     async def download_video(self, video_id: str, output_path: Path) -> None:
         try:

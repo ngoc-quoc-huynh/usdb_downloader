@@ -17,21 +17,23 @@ class File:
 
 class Parser:
     _ID_PATTERN: Final[re.Pattern[str]] = re.compile(r"(?:a=|v=)([A-Za-z0-9_-]{11})")
-    _INPUT_DIR: Final[Path] = Path("./songs/input")
-    _OUTPUT_DIR: Final[Path] = Path("./songs/output")
+
+    def __init__(self, input_dir: Path, output_dir: Path) -> None:
+        self.input_dir = input_dir
+        self.output_dir = output_dir
 
     def iter_files(self) -> Generator[File, None, None]:
-        if not self._INPUT_DIR.exists():
-            logger.warning(f"Input directory does not exist: {self._INPUT_DIR}")
+        if not self.input_dir.exists():
+            logger.warning(f"Input directory does not exist: {self.input_dir}")
             return
 
-        for path in self._INPUT_DIR.glob("*.txt"):
+        for path in self.input_dir.glob("*.txt"):
             song = self._parse_file(path)
             if song:
                 yield song
 
     def write_file(self, file: File) -> None:
-        output_file = self._OUTPUT_DIR / f"{file.name}.txt"
+        output_file = self.output_dir / f"{file.name}.txt"
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, "w", encoding="utf-8") as f:
             for key, value in file.headers.items():
