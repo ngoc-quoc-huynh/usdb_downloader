@@ -45,7 +45,7 @@ async def _run() -> None:
     for file in parser.iter_files():
         parser.write_file(file)
         video_id = file.video_id
-        output_path = _OUTPUT_DIR / file.name
+        output_path = _OUTPUT_DIR / file.name / file.name
         await asyncio.gather(
             youtube_downloader.download_audio(
                 video_id=video_id,
