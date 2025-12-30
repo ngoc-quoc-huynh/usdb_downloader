@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import Final
 
+from rich.logging import RichHandler
 from usdb_downloader import Parser, YoutubeDownloader
 
 logger = logging.getLogger(__name__)
@@ -18,8 +19,9 @@ def _setup_logging(verbose: bool) -> None:
 
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s %(levelname)-8s %(name)s - %(message)s",
-        datefmt="%H:%M:%S",
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler()],
     )
 
 
