@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Final, cast
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
+from usdb_downloader import SilentLogger
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,9 @@ class YoutubeDownloader:
         "quiet": True,
         "no_warnings": True,
         "noprogress": True,
+        "no_color": True,
         "concurrent_fragment_downloads": 5,
+        "logger": SilentLogger(),
     }
     _DEFAULT_VIDEO_OPTS: Final[Mapping[str, Any]] = {
         **_DEFAULT_COMMON_OPTS,
@@ -48,9 +51,10 @@ class YoutubeDownloader:
             )
             logger.info("Successfully downloaded video with id %s", video_id)
         except DownloadError as e:
-            logger.error("Failed to download video with id %s: %s", video_id, e)
+            error_msg = str(e)
+            logger.error("Failed to download video with id %s: %s", video_id, error_msg)
             raise YoutubeDownloaderException(
-                f"Failed to download video with id {video_id}: {e}"
+                f"Failed to download video: {error_msg}"
             ) from e
 
     async def download_audio(self, video_id: str, output_path: Path) -> None:
@@ -64,9 +68,10 @@ class YoutubeDownloader:
             )
             logger.info("Successfully downloaded audio with id %s", video_id)
         except DownloadError as e:
-            logger.error("Failed to download audio with id %s: %s", video_id, e)
+            error_msg = str(e)
+            logger.error("Failed to download audio with id %s: %s", video_id, error_msg)
             raise YoutubeDownloaderException(
-                f"Failed to download audio with id {video_id}: {e}"
+                f"Failed to download audio: {error_msg}"
             ) from e
 
     @classmethod
