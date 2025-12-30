@@ -6,6 +6,7 @@ from typing import Final, Generator
 from usdb_downloader.models import File
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 class Parser:
@@ -14,16 +15,27 @@ class Parser:
     def __init__(self, input_dir: Path, output_dir: Path) -> None:
         self.input_dir = input_dir
         self.output_dir = output_dir
+        logger.info(
+            "Initialized parser with input directory %s and output directory %s",
+            self.input_dir,
+            self.output_dir,
+        )
 
     def iter_files(self) -> Generator[File, None, None]:
         if not self.input_dir.exists():
-            logger.warning(f"Input directory does not exist: {self.input_dir}")
+            logger.warning("Input directory %s is missing", self.input_dir)
             return
 
+        logger.info("Start scanning input directory %s", self.input_dir)
+
+        count = 0
         for path in self.input_dir.glob("*.txt"):
             song = self._parse_file(path)
             if song:
                 yield song
+                count += 1
+
+        logger.info("Scanned %d file(s)", count)
 
     def write_file(self, file: File) -> None:
         output_file = self.output_dir / f"{file.name}.txt"
@@ -33,13 +45,19 @@ class Parser:
                 f.write(f"#{key}:{value}\n")
             f.writelines(f"{line}\n" for line in file.lyrics)
 
-        logger.info(f"Wrote file {output_file}")
+        logger.info(
+            "Wrote file %s to file %s",
+            file.name,
+            output_file,
+        )
 
     def _parse_file(self, path: Path) -> File | None:
         name = path.stem
         video_id: str | None = None
         headers: dict[str, str] = {}
         lyrics: list[str] = []
+
+        logger.info("Start parsing file %s", name)
 
         with path.open("r", encoding="utf-8") as src:
             for raw_line in src:
@@ -58,12 +76,14 @@ class Parser:
                         lyrics.append(line)
 
         if video_id is None:
+            logger.warning("File %s is missing video id", name)
             return None
 
         headers["COVER"] = f"{name}.jpg"
         headers["MP3"] = f"{name}.mp3"
         headers["VIDEO"] = f"{name}.webm"
-        logger.info(f"Parsed file {name}")
+
+        logger.info("Parsed file %s", name)
 
         return File(
             name=name,

@@ -38,28 +38,34 @@ class YoutubeDownloader:
 
     async def download_video(self, video_id: str, output_path: Path) -> None:
         try:
+            logger.info("Starting download video with id %s", video_id)
             await asyncio.to_thread(
                 self._download,
                 video_id,
                 output_path,
                 self._DEFAULT_VIDEO_OPTS,
             )
+            logger.info("Successfully downloaded video with id %s", video_id)
         except DownloadError as e:
+            logger.error("Failed to download video with id %s: %s", video_id, e)
             raise YoutubeDownloaderException(
-                f"Failed to download video {video_id}: {e}"
+                f"Failed to download video with id {video_id}: {e}"
             ) from e
 
     async def download_audio(self, video_id: str, output_path: Path) -> None:
         try:
+            logger.info("Starting download audio with id %s", video_id)
             await asyncio.to_thread(
                 self._download,
                 video_id,
                 output_path,
                 self._DEFAULT_AUDIO_OPTS,
             )
+            logger.info("Successfully downloaded audio with id %s", video_id)
         except DownloadError as e:
+            logger.error("Failed to download audio with id %s: %s", video_id, e)
             raise YoutubeDownloaderException(
-                f"Failed to download audio {video_id}: {e}"
+                f"Failed to download audio with id {video_id}: {e}"
             ) from e
 
     @classmethod
@@ -79,7 +85,5 @@ class YoutubeDownloader:
             "outtmpl": str(output_path.with_suffix(".%(ext)s")),
         }
 
-        logger.info("Starting download: %s -> %s", url, output_path)
         with YoutubeDL(cast(Any, opts)) as ydl:
             ydl.download([url])
-        logger.info("Successfully downloaded: %s", video_id)
