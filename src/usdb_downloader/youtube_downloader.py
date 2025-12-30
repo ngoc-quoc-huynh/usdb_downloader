@@ -17,6 +17,7 @@ class YoutubeDownloader:
     _DEFAULT_COMMON_OPTS: Final[Mapping[str, Any]] = {
         "quiet": True,
         "no_warnings": True,
+        "noprogress": True,
         "concurrent_fragment_downloads": 5,
     }
     _DEFAULT_VIDEO_OPTS: Final[Mapping[str, Any]] = {
