@@ -2,8 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Final
 
-from usdb_downloader.parser import Parser
-from usdb_downloader.youtube_downloader import YoutubeDownloader
+from usdb_downloader import Parser, YoutubeDownloader
 
 _INPUT_DIR: Final[Path] = Path("./songs/input")
 _OUTPUT_DIR: Final[Path] = Path("./songs/output")

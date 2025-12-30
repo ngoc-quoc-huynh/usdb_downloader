@@ -1,18 +1,11 @@
 import re
 import logging
-from dataclasses import field, dataclass
 from pathlib import Path
 from typing import Final, Generator
 
+from usdb_downloader.models import File
+
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class File:
-    name: str
-    video_id: str
-    headers: dict[str, str] = field(default_factory=dict[str, str])
-    lyrics: list[str] = field(default_factory=list[str])
 
 
 class Parser:
