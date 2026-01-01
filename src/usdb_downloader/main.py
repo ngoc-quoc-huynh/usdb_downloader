@@ -35,12 +35,7 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Enable verbose logging",
     )
-    parser.add_argument(
-        "-q",
-        "--quiet",
-        action="store_true",
-        help="Disable console output",
-    )
+
     return parser.parse_args()
 
 
