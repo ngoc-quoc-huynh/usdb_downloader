@@ -1,8 +1,17 @@
-.PHONY: style run
+.PHONY: style run test
+
+
+_pyright:
+	uv run pyright
+
+_ruff:
+	uv run ruff format src/ tests/
 
 style:
-	uv run pyright
-	uv run ruff format src/ tests/
+	$(MAKE) -j2 _pyright _ruff
 
 run:
 	uv run usdb-downloader
+
+test:
+	pytest
