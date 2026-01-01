@@ -65,7 +65,6 @@ class App:
 
                 self._console.print_song_success()
                 processed += 1
-
             except YoutubeDownloaderException:
                 self._console.print_song_error("Failed to download audio and video")
                 failed += 1
