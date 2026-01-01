@@ -2,7 +2,7 @@
 
 style:
 	uv run pyright
-	uv run ruff format src/
+	uv run ruff format src/ tests/
 
 run:
 	uv run usdb-downloader
