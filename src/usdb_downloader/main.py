@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import os
 from pathlib import Path
 from typing import Final
 
@@ -10,8 +11,8 @@ from usdb_downloader.youtube_downloader import YoutubeDownloaderException
 
 logger = logging.getLogger(__name__)
 
-_INPUT_DIR: Final[Path] = Path("./songs/input")
-_OUTPUT_DIR: Final[Path] = Path("./songs/output")
+_INPUT_DIR: Final[Path] = Path(os.getenv("INPUT_DIR", "./songs/input"))
+_OUTPUT_DIR: Final[Path] = Path(os.getenv("OUTPUT_DIR", "./songs/output"))
 
 
 def _setup_logging(verbose: bool) -> None:

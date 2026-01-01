@@ -1,0 +1,11 @@
+services:
+  usdb-downloader:
+    build: .
+    container_name: usdb-downloader
+    tty: true
+    volumes:
+      - ./songs/input:/app/input:ro
+      - ./songs/output:/app/output:rw
+    environment:
+      INPUT_DIR: /app/input
+      OUTPUT_DIR: /app/output
