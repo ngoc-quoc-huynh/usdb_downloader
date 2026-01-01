@@ -45,19 +45,22 @@ class App:
                 video_id = file.video_id
                 output_path = self.output_dir / file.name / file.name
 
-                self.console.print_song_step(
-                    f"Downloading audio and video (ID: {video_id})…"
-                )
+                with self.console.print_song_step_spinner(
+                    f"Downloading audio and video (ID: {video_id})"
+                ):
+                    await asyncio.gather(
+                        self.youtube_downloader.download_audio(
+                            video_id=video_id,
+                            output_path=output_path,
+                        ),
+                        self.youtube_downloader.download_video(
+                            video_id=video_id,
+                            output_path=output_path,
+                        ),
+                    )
 
-                await asyncio.gather(
-                    self.youtube_downloader.download_audio(
-                        video_id=video_id,
-                        output_path=output_path,
-                    ),
-                    self.youtube_downloader.download_video(
-                        video_id=video_id,
-                        output_path=output_path,
-                    ),
+                self.console.print_song_step(
+                    f"Downloading audio and video (ID: {video_id})"
                 )
 
                 self.console.print_song_success()

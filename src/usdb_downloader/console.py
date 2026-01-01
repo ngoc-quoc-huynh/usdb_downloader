@@ -1,5 +1,9 @@
-from typing import Any
+from contextlib import contextmanager
+from typing import Any, Generator
+
 from rich.console import Console as RichConsole
+from rich.live import Live
+from rich.spinner import Spinner
 
 
 class Console:
@@ -46,3 +50,15 @@ class Console:
 
     def print_failure(self, message: str) -> None:
         self._print(f"\n[red]✗ {message}[/red]")
+
+    @contextmanager
+    def print_song_step_spinner(self, message: str) -> Generator[None, None, None]:
+        if self._enabled:
+            with Live(
+                Spinner("dots", text=f"├─ [dim]{message}[/dim]"),
+                console=self._console,
+                transient=True,
+            ):
+                yield
+        else:
+            yield
