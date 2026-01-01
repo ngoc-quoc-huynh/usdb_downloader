@@ -39,4 +39,4 @@ COPY --chown=appuser:appuser . .
 
 USER appuser
 
-CMD ["usdb-downloader"]
+ENTRYPOINT ["usdb-downloader"]
