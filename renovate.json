@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "config:recommended",
+    ":automergePatch",
+    ":configMigration"
+  ],
+  "schedule": [
+    "before 7am on monday"
+  ],
+  "timezone": "Europe/Berlin",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 7am on monday"
+    ]
+  },
+  "rebaseWhen": "never"
+}
