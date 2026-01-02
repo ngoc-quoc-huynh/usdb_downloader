@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass
+@dataclass(frozen=True)
 class File:
     name: str
     video_id: str
