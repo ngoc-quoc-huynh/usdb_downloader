@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 from contextlib import contextmanager
-from typing import Any, Generator
+from typing import TYPE_CHECKING, Any
 
 from rich.console import Console as RichConsole
 from rich.live import Live
 from rich.spinner import Spinner
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class Console:
@@ -52,7 +57,7 @@ class Console:
         self._print(f"\n[red]✗ {message}[/red]")
 
     @contextmanager
-    def print_song_step_spinner(self, message: str) -> Generator[None, None, None]:
+    def print_song_step_spinner(self, message: str) -> Generator[None]:
         if self._enabled:
             with Live(
                 Spinner("dots", text=f"├─ [dim]{message}[/dim]"),

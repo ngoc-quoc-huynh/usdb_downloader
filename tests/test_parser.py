@@ -1,6 +1,13 @@
-from unittest.mock import MagicMock
-from usdb_downloader.parser import Parser, File
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
+
+from usdb_downloader.parser import File, Parser
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture
@@ -75,7 +82,7 @@ def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> N
         path=input_path / "Test - Your Song.txt",
         content="""
        #ARTIST:Test
-       #TITLE:Your Song 
+       #TITLE:Your Song
        #VIDEO:v=eQw4w9WgXcQ
        : 0 1 2 Your
        : 3 4 5 Song

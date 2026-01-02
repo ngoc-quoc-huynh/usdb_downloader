@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 import asyncio
 import logging
-from collections.abc import Mapping
-from pathlib import Path
-from typing import Any, Final, cast
+from typing import TYPE_CHECKING, Any, Final, cast
+
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
-from usdb_downloader import SilentLogger
+
+from usdb_downloader.silent_logger import SilentLogger
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -91,5 +97,5 @@ class YoutubeDownloader:
             "outtmpl": str(output_path.with_suffix(".%(ext)s")),
         }
 
-        with YoutubeDL(cast(Any, opts)) as ydl:
+        with YoutubeDL(cast("Any", opts)) as ydl:
             ydl.download([url])

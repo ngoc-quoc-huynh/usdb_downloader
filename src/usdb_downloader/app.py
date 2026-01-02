@@ -1,11 +1,21 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from usdb_downloader.parser import Parser
-from usdb_downloader.youtube_downloader import YoutubeDownloader
 from usdb_downloader.console import Console
-from usdb_downloader.youtube_downloader import YoutubeDownloaderException
+from usdb_downloader.parser import Parser
+from usdb_downloader.youtube_downloader import (
+    YoutubeDownloader,
+    YoutubeDownloaderException,
+)
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from usdb_downloader.console import Console
 
 logger = logging.getLogger(__name__)
 

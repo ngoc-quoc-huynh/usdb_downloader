@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Final
 
 from rich.logging import RichHandler
-from usdb_downloader import Console, App
 
+from usdb_downloader.app import App
+from usdb_downloader.console import Console
 
 logger = logging.getLogger(__name__)
 

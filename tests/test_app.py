@@ -1,14 +1,19 @@
+from __future__ import annotations
+
 from contextlib import contextmanager
-from pathlib import Path
-from typing import TypeAlias
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
 from usdb_downloader.app import App
 from usdb_downloader.parser import File
 from usdb_downloader.youtube_downloader import YoutubeDownloaderException
 
-MockConsole: TypeAlias = MagicMock
+if TYPE_CHECKING:
+    from pathlib import Path
+
+type MockConsole = MagicMock
 
 
 @pytest.fixture
@@ -26,7 +31,7 @@ def mock_console() -> MockConsole:
     console = MagicMock()
 
     @contextmanager
-    def spinner_ctx(message):
+    def spinner_ctx(message: str):
         yield
 
     console.print_song_step_spinner.side_effect = spinner_ctx

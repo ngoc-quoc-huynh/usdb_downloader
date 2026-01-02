@@ -1,15 +1,19 @@
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
+from yt_dlp.utils import DownloadError
+
 from usdb_downloader.youtube_downloader import (
     YoutubeDownloader,
     YoutubeDownloaderException,
 )
-from yt_dlp.utils import DownloadError
-from yt_dlp import YoutubeDL
 
-YoutubeMock: TypeAlias = MagicMock
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from pathlib import Path
 
 
 @pytest.fixture
@@ -18,7 +22,7 @@ def youtube_downloader() -> YoutubeDownloader:
 
 
 @pytest.fixture
-def mock_yt_dlp() -> YoutubeMock:
+def mock_yt_dlp() -> Generator[MagicMock]:
     with patch("usdb_downloader.youtube_downloader.YoutubeDL") as mock:
         yield mock
 
@@ -36,7 +40,7 @@ def output_path(tmp_path: Path) -> Path:
 @pytest.mark.asyncio
 async def test_download_video_correctly(
     youtube_downloader: YoutubeDownloader,
-    mock_yt_dlp: YoutubeMock,
+    mock_yt_dlp: MagicMock,
     output_path: Path,
     video_id: str,
 ) -> None:
@@ -63,7 +67,7 @@ async def test_download_video_correctly(
 @pytest.mark.asyncio
 async def test_download_video_raises_exception_on_download_error(
     youtube_downloader: YoutubeDownloader,
-    mock_yt_dlp: YoutubeMock,
+    mock_yt_dlp: MagicMock,
     output_path: Path,
     video_id: str,
 ) -> None:
@@ -80,9 +84,9 @@ async def test_download_video_raises_exception_on_download_error(
 
 
 @pytest.mark.asyncio
-async def test_download_video_correctly(
+async def test_download_audio_correctly(
     youtube_downloader: YoutubeDownloader,
-    mock_yt_dlp: YoutubeMock,
+    mock_yt_dlp: MagicMock,
     output_path: Path,
     video_id: str,
 ) -> None:
@@ -115,7 +119,7 @@ async def test_download_video_correctly(
 @pytest.mark.asyncio
 async def test_download_audio_raises_exception_on_download_error(
     youtube_downloader: YoutubeDownloader,
-    mock_yt_dlp: YoutubeMock,
+    mock_yt_dlp: MagicMock,
     output_path: Path,
     video_id: str,
 ) -> None:

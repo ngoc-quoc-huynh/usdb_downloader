@@ -1,9 +1,14 @@
-import re
+from __future__ import annotations
+
 import logging
-from pathlib import Path
-from typing import Final, Generator
+import re
+from typing import TYPE_CHECKING, Final
 
 from usdb_downloader.models import File
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -21,7 +26,7 @@ class Parser:
             self._output_dir,
         )
 
-    def iter_files(self) -> Generator[File, None, None]:
+    def iter_files(self) -> Generator[File]:
         if not self._input_dir.exists():
             logger.warning("Input directory %s is missing", self._input_dir)
             return
@@ -40,7 +45,7 @@ class Parser:
     def write_file(self, file: File) -> None:
         output_file = (self._output_dir / file.name / file.name).with_suffix(".txt")
         output_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_file, "w", encoding="utf-8") as f:
+        with output_file.open("w", encoding="utf-8") as f:
             for key, value in file.headers.items():
                 f.write(f"#{key}:{value}\n")
             f.writelines(f"{line}\n" for line in file.lyrics)
