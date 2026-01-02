@@ -11,6 +11,14 @@ The tool takes `.txt` song files from USDB as input, automatically downloads the
 corresponding audio and video files from YouTube, groups all related assets into a single
 song folder, and searches for a cover in your browser.
 
+<p align="center">
+    <img
+    src="https://github.com/user-attachments/assets/e8ba9d73-53ac-465d-b585-f91a326d297e"
+    alt="Demo GIF"
+    width="500"
+  />
+<p/>
+
 ## Prequisites
 
 ### asdf
