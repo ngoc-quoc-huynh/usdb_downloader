@@ -21,9 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      # This is required for Python to build from source using asdf
+      - name: Install Python build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libbz2-dev libreadline-dev liblzma-dev
       - name: Setup asdf
         uses: asdf-vm/actions/setup@v4
-
       - name: Cache asdf
         id: asdf-cache
         uses: actions/cache@v5
