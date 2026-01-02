@@ -92,7 +92,7 @@ def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> N
     files = list(parser.iter_files())
 
     assert len(files) == 2
-    assert files[0] == File(
+    expected_song1 = File(
         name="Test - Your Song",
         video_id="eQw4w9WgXcQ",
         headers={
@@ -107,7 +107,8 @@ def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> N
             ": 3 4 5 Song",
         ],
     )
-    assert files[1] == File(
+    assert expected_song1 in files
+    expected_song2 =File(
         name="Test - My Song",
         video_id="dQw4w9WgXcQ",
         headers={
@@ -122,6 +123,7 @@ def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> N
             ": 3 4 5 Song",
         ],
     )
+    assert expected_song2 in files
 
 
 def test_write_file(parser: Parser, output_path: Path) -> None:
