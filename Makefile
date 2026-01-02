@@ -1,4 +1,4 @@
-.PHONY: check_style run test run_in_docker
+.PHONY: check_style fix_style run run_in_docker test
 
 
 _check_pyright:
