@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import urllib.parse
+import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -72,7 +74,8 @@ class App:
                 self._console.print_song_step(
                     f"Downloading audio and video (ID: {video_id})"
                 )
-
+                self._search_cover(file.name)
+                self._console.print_search_cover(file.name)
                 self._console.print_song_success()
                 processed += 1
             except YoutubeDownloaderException:
@@ -81,3 +84,10 @@ class App:
 
         self._console.print_summary(processed=processed, failed=failed)
         logger.info("Finished application")
+
+    def _search_cover(self, name: str) -> None:
+        encoded_query = urllib.parse.quote(f"{name} Spotify Cover")
+        webbrowser.open(
+            url=f"https://www.google.com/search?tbm=isch&q={encoded_query}",
+            new=2,
+        )

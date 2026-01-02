@@ -67,3 +67,6 @@ class Console:
                 yield
         else:
             yield
+
+    def print_search_cover(self, name: str) -> None:
+        self._print(f"  ├─ [dim]Search for cover for {name}[/dim]")

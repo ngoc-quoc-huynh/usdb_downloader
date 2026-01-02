@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -11,9 +11,8 @@ from usdb_downloader.parser import File
 from usdb_downloader.youtube_downloader import YoutubeDownloaderException
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
     from pathlib import Path
-
-type MockConsole = MagicMock
 
 
 @pytest.fixture
@@ -27,7 +26,7 @@ def output_dir(tmp_path: Path) -> Path:
 
 
 @pytest.fixture
-def mock_console() -> MockConsole:
+def mock_console() -> MagicMock:
     console = MagicMock()
 
     @contextmanager
@@ -40,10 +39,16 @@ def mock_console() -> MockConsole:
 
 
 @pytest.fixture
+def mock_webbrowser_open() -> Generator[MagicMock]:
+    with patch("usdb_downloader.app.webbrowser.open") as mock:
+        yield mock
+
+
+@pytest.fixture
 def app(
     input_dir: Path,
     output_dir: Path,
-    mock_console: MockConsole,
+    mock_console: MagicMock,
 ) -> App:
     return App(input_dir=input_dir, output_dir=output_dir, console=mock_console)
 
@@ -70,7 +75,7 @@ def sample_file() -> File:
 @pytest.mark.asyncio
 async def test_run_with_no_files(
     app: App,
-    mock_console: MockConsole,
+    mock_console: MagicMock,
 ) -> None:
     app._parser.iter_files = MagicMock(return_value=iter([]))
 
@@ -83,9 +88,10 @@ async def test_run_with_no_files(
 @pytest.mark.asyncio
 async def test_run_with_single_file_success(
     app: App,
-    mock_console: MockConsole,
+    mock_console: MagicMock,
     sample_file: File,
     output_dir: Path,
+    mock_webbrowser_open: MagicMock,
 ) -> None:
     app._parser.iter_files = MagicMock(return_value=iter([sample_file]))
     app._parser.write_file = MagicMock()
@@ -121,6 +127,11 @@ async def test_run_with_single_file_success(
     )
 
     mock_console.print_song_success.assert_called_once()
+    mock_console.print_search_cover.assert_called_once_with("Test - My Song")
+    mock_webbrowser_open.assert_called_once_with(
+        url="https://www.google.com/search?tbm=isch&q=Test%20-%20My%20Song%20Spotify%20Cover",
+        new=2,
+    )
     mock_console.print_summary.assert_called_once_with(
         processed=1,
         failed=0,
@@ -147,6 +158,7 @@ async def test_run_with_youtube_downloader_exception(
         "Failed to download audio and video"
     )
     mock_console.print_song_success.assert_not_called()
+    mock_console.print_search_cover.assert_not_called()
     mock_console.print_summary.assert_called_once_with(
         processed=0,
         failed=1,
@@ -158,6 +170,7 @@ async def test_run_with_multiple_files_mixed_results(
     app: App,
     mock_console: MagicMock,
     output_dir: Path,
+    mock_webbrowser_open: MagicMock,
 ) -> None:
     file1 = File(
         name="Test - My Song",
@@ -229,6 +242,8 @@ async def test_run_with_multiple_files_mixed_results(
     )
 
     assert mock_console.print_song_success.call_count == 2
+    assert mock_console.print_search_cover.call_count == 2
+    assert mock_webbrowser_open.call_count == 2
     assert mock_console.print_song_error.call_count == 1
     mock_console.print_summary.assert_called_once_with(
         processed=2,
