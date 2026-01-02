@@ -2,6 +2,7 @@
 
 [![build](https://github.com/ngoc-quoc-huynh/usdb_downloader/actions/workflows/usdb_downloader.yml/badge.svg?branch=main)](https://github.com/ngoc-quoc-huynh/usdb_downloader/actions/workflows/usdb_downloader.yml?query=branch%3Amain)
 [![renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![release](https://img.shields.io/github/v/release/ngoc-quoc-huynh/usdb_downloader)](https://github.com/ngoc-quoc-huynh/usdb_downloader/releases/latest)
 [![license](https://img.shields.io/github/license/ngoc-quoc-huynh/usdb_downloader?branch=main)](https://raw.githubusercontent.com/ngoc-quoc-huynh/usdb_downloader/refs/heads/main/LICENSE)
 
 A command-line tool for downloading and managing UltraStar Deluxe song files
