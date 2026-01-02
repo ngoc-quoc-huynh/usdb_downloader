@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import logging
 import os
+from importlib.metadata import version
 from pathlib import Path
 from typing import Final
 
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 _INPUT_DIR: Final[Path] = Path(os.getenv("INPUT_DIR", "./songs/input"))
 _OUTPUT_DIR: Final[Path] = Path(os.getenv("OUTPUT_DIR", "./songs/output"))
+_app_version: Final[str] = version("usdb-downloader")
 
 
 def _setup_logging(verbose: bool) -> None:
@@ -36,6 +38,12 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Enable verbose logging",
     )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {_app_version}",
+        help="Show version information",
+    )
 
     return parser.parse_args()
 
@@ -46,7 +54,11 @@ def main() -> None:
     console = Console(not args.verbose)
 
     try:
-        console.print_header(input_dir=_INPUT_DIR, output_dir=_OUTPUT_DIR)
+        console.print_header(
+            input_dir=_INPUT_DIR,
+            output_dir=_OUTPUT_DIR,
+            app_version=_app_version,
+        )
         asyncio.run(
             App(
                 input_dir=_INPUT_DIR,

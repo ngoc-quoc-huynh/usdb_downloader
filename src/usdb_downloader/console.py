@@ -20,8 +20,9 @@ class Console:
         if self._enabled:
             self._console.print(*args, **kwargs)
 
-    def print_header(self, input_dir: Any, output_dir: Any) -> None:
+    def print_header(self, input_dir: Any, output_dir: Any, app_version: str) -> None:
         self._print("\n[bold cyan]🎵 USDB Downloader[/bold cyan]")
+        self._print(f"[dim]Version: {app_version}[/dim]")
         self._print(f"[dim]Input directory: {input_dir}[/dim]")
         self._print(f"[dim]Output directory: {output_dir}[/dim]\n")
 
