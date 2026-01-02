@@ -10,9 +10,11 @@ build-backend = "hatchling.build"
 # ============================================================================
 [project]
 name = "usdb-downloader"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "A command-line tool for downloading and managing UltraStar Deluxe song files from USDB (UltraStar Deluxe Database)."
 readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{name = "Ngoc Quoc Huynh", email = "ngoc.quoci.huynh@gmail.com"}]
 requires-python = ">=3.14"
 dependencies = [
     "yt-dlp>=2025.12.8",
