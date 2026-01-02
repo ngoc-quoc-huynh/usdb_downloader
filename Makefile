@@ -26,4 +26,4 @@ run_in_docker:
 	docker compose run --rm usdb-downloader
 
 test:
-	pytest
+	uv run pytest -v --tb=long
