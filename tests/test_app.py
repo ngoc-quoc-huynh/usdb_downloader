@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -11,7 +11,6 @@ from usdb_downloader.parser import File
 from usdb_downloader.youtube_downloader import YoutubeDownloaderException
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
     from pathlib import Path
 
 
@@ -36,12 +35,6 @@ def mock_console() -> MagicMock:
     console.print_song_step_spinner.side_effect = spinner_ctx
 
     return console
-
-
-@pytest.fixture
-def mock_webbrowser_open() -> Generator[MagicMock]:
-    with patch("usdb_downloader.app.webbrowser.open") as mock:
-        yield mock
 
 
 @pytest.fixture
@@ -91,7 +84,6 @@ async def test_run_with_single_file_success(
     mock_console: MagicMock,
     sample_file: File,
     output_dir: Path,
-    mock_webbrowser_open: MagicMock,
 ) -> None:
     app._parser.iter_files = MagicMock(return_value=iter([sample_file]))
     app._parser.write_file = MagicMock()
@@ -127,10 +119,9 @@ async def test_run_with_single_file_success(
     )
 
     mock_console.print_song_success.assert_called_once()
-    mock_console.print_search_cover.assert_called_once_with("Test - My Song")
-    mock_webbrowser_open.assert_called_once_with(
+    mock_console.print_search_cover.assert_called_once_with(
+        name="Test - My Song",
         url="https://www.google.com/search?tbm=isch&q=Test%20-%20My%20Song%20Spotify%20Cover",
-        new=2,
     )
     mock_console.print_summary.assert_called_once_with(
         processed=1,
@@ -170,7 +161,6 @@ async def test_run_with_multiple_files_mixed_results(
     app: App,
     mock_console: MagicMock,
     output_dir: Path,
-    mock_webbrowser_open: MagicMock,
 ) -> None:
     file1 = File(
         name="Test - My Song",
@@ -243,7 +233,6 @@ async def test_run_with_multiple_files_mixed_results(
 
     assert mock_console.print_song_success.call_count == 2
     assert mock_console.print_search_cover.call_count == 2
-    assert mock_webbrowser_open.call_count == 2
     assert mock_console.print_song_error.call_count == 1
     mock_console.print_summary.assert_called_once_with(
         processed=2,

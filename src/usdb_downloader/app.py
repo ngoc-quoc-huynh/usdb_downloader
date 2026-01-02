@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import urllib.parse
-import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -74,7 +73,7 @@ class App:
                 self._parser.write_file(file)
                 self._console.print_song_step("Parsed song file")
                 self._search_cover(file.name)
-                self._console.print_search_cover(file.name)
+
                 self._console.print_song_success()
                 processed += 1
             except YoutubeDownloaderException:
@@ -86,7 +85,9 @@ class App:
 
     def _search_cover(self, name: str) -> None:
         encoded_query = urllib.parse.quote(f"{name} Spotify Cover")
-        webbrowser.open(
-            url=f"https://www.google.com/search?tbm=isch&q={encoded_query}",
-            new=2,
+        url = f"https://www.google.com/search?tbm=isch&q={encoded_query}"
+        logger.info("Searched cover URL: %s", url)
+        self._console.print_search_cover(
+            name=name,
+            url=url,
         )
