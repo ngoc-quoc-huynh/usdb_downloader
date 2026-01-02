@@ -1,0 +1,61 @@
+name: usdb_downloader
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup asdf
+        uses: asdf-vm/actions/setup@v4
+
+      - name: Cache asdf
+        id: asdf-cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.asdf/installs
+            ~/.asdf/plugins
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          restore-keys: ${{ runner.os }}-asdf-
+      - name: Install asdf
+        uses: asdf-vm/actions/install@v4
+        if: steps.asdf-cache.outputs.cache-hit != 'true'
+      - name: Reshim asdf
+        run: asdf reshim
+
+      - name: Cache uv
+        id: uv-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: Check types
+        run: uv run pyright src/ tests/
+      - name: Check formatting
+        run: uv run ruff format src/ tests/ --check
+      - name: Check linting
+        run: uv run ruff check src/ tests/
+
+      - name: Run tests
+        run: uv run pytest
