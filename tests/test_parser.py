@@ -154,8 +154,8 @@ def test_write_file(parser: Parser, output_path: Path) -> None:
     assert lines[2] == "#MP3:Test - My Song.mp3"
     assert lines[3] == "#TITLE:My Song"
     assert lines[4] == "#VIDEO:Test - My Song.webm"
-    assert lines[5] == ": 0 1 2 My"
-    assert lines[6] == ": 3 4 5 Song"
+    assert lines[5] == ": 0 1 2 My "
+    assert lines[6] == ": 3 4 5 Song "
 
 
 def test_parse_file_correctly(

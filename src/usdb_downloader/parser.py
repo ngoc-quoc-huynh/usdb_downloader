@@ -48,7 +48,7 @@ class Parser:
         with output_file.open("w", encoding="utf-8") as f:
             for key, value in file.headers.items():
                 f.write(f"#{key}:{value}\n")
-            f.writelines(f"{line}\n" for line in file.lyrics)
+            f.writelines(f"{line} \n" for line in file.lyrics)
 
         logger.info(
             "Wrote file %s to file %s",
