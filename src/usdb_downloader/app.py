@@ -51,9 +51,6 @@ class App:
             self._console.print_song_start(idx=idx, total=len(files), name=file.name)
 
             try:
-                self._parser.write_file(file)
-                self._console.print_song_step("Parsed song file")
-
                 video_id = file.video_id
                 output_path = self._output_dir / file.name / file.name
 
@@ -74,6 +71,8 @@ class App:
                 self._console.print_song_step(
                     f"Downloading audio and video (ID: {video_id})"
                 )
+                self._parser.write_file(file)
+                self._console.print_song_step("Parsed song file")
                 self._search_cover(file.name)
                 self._console.print_search_cover(file.name)
                 self._console.print_song_success()
