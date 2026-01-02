@@ -108,7 +108,7 @@ def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> N
         ],
     )
     assert expected_song1 in files
-    expected_song2 =File(
+    expected_song2 = File(
         name="Test - My Song",
         video_id="dQw4w9WgXcQ",
         headers={
