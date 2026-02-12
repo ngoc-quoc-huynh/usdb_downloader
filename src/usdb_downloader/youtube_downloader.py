@@ -94,7 +94,7 @@ class YoutubeDownloader:
         url = cls._build_download_url(video_id)
         opts = {
             **base_opts,
-            "outtmpl": str(output_path.with_suffix(".%(ext)s")),
+            "outtmpl": f"{output_path}.%(ext)s",
         }
 
         with YoutubeDL(cast("Any", opts)) as ydl:

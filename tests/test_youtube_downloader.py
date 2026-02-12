@@ -133,3 +133,28 @@ async def test_download_audio_raises_exception_on_download_error(
         )
 
     assert "Failed to download audio: Download failed" in str(exc_info.value)
+
+
+@pytest.mark.asyncio
+async def test_download_video_with_complex_name(
+    youtube_downloader: YoutubeDownloader,
+    mock_yt_dlp: MagicMock,
+    tmp_path: Path,
+    video_id: str,
+) -> None:
+    output_path = tmp_path / "Test feat. You - My Song" / "Test feat. You - My Song"
+    yt_dlp_instance = mock_yt_dlp.return_value
+    yt_dlp_instance.__enter__.return_value = yt_dlp_instance
+
+    await youtube_downloader.download_video(
+        video_id=video_id,
+        output_path=output_path,
+    )
+
+    mock_yt_dlp.assert_called_once()
+    args, _ = mock_yt_dlp.call_args
+    opts = args[0]
+
+    expected_outtmpl = f"{output_path}.%(ext)s"
+    assert opts["outtmpl"] == expected_outtmpl
+    assert "feat" in str(opts["outtmpl"])

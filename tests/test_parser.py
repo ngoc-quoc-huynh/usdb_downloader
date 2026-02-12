@@ -158,6 +158,26 @@ def test_write_file(parser: Parser, output_path: Path) -> None:
     assert lines[6] == ": 3 4 5 Song "
 
 
+def test_write_file_with_complex_name(parser: Parser, output_path: Path) -> None:
+    file = File(
+        name="Test feat. You - My Song",
+        video_id="dQw4w9WgXcQ",
+        headers={
+            "ARTIST": "Test feat. You",
+            "TITLE": "My Song",
+        },
+        lyrics=[],
+    )
+
+    parser.write_file(file)
+
+    song_dir = output_path / "Test feat. You - My Song"
+    assert song_dir.exists()
+
+    output_file = song_dir / "Test feat. You - My Song.txt"
+    assert output_file.exists()
+
+
 def test_parse_file_correctly(
     parser: Parser,
     input_path: Path,

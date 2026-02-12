@@ -43,7 +43,7 @@ class Parser:
         logger.info("Scanned %d file(s)", count)
 
     def write_file(self, file: File) -> None:
-        output_file = (self._output_dir / file.name / file.name).with_suffix(".txt")
+        output_file = self._output_dir / file.name / f"{file.name}.txt"
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with output_file.open("w", encoding="utf-8") as f:
             for key, value in file.headers.items():
