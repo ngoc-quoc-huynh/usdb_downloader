@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 
-FROM python:3.14.5-slim-bookworm
+FROM python:3.14.6-slim-bookworm
 
 # ffmpeg required by yt-dlp
 RUN apt-get update \
