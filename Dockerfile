@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.24
+# syntax=docker/dockerfile:1.25
 
 FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
 
