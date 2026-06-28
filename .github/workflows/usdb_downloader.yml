@@ -30,7 +30,7 @@ jobs:
         uses: asdf-vm/actions/setup@v4
       - name: Cache asdf
         id: asdf-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.asdf/installs
@@ -45,7 +45,7 @@ jobs:
 
       - name: Cache uv
         id: uv-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/uv
           key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
