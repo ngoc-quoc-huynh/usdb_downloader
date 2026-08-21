@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.25
+# syntax=docker/dockerfile:1.26
 
 FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
 
@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
 
-FROM python:3.14.6-slim-bookworm
+FROM python:3.14.7-slim-bookworm
 
 # ffmpeg required by yt-dlp
 RUN apt-get update \
