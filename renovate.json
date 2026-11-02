@@ -3,7 +3,8 @@
     "config:recommended",
     ":automergePatch",
     ":configMigration",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":semanticCommits"
   ],
   "schedule": [
     "before 7am on monday"
