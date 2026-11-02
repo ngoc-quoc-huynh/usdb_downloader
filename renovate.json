@@ -2,7 +2,8 @@
   "extends": [
     "config:recommended",
     ":automergePatch",
-    ":configMigration"
+    ":configMigration",
+    "helpers:pinGitHubActionDigests"
   ],
   "schedule": [
     "before 7am on monday"
