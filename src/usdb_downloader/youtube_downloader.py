@@ -31,7 +31,7 @@ class YoutubeDownloader:
     }
     _DEFAULT_VIDEO_OPTS: Final[Mapping[str, Any]] = {
         **_DEFAULT_COMMON_OPTS,
-        "format": "bestvideo[ext=webm]/bestvideo",
+        "format": "bestvideo[ext=webm]",
         "merge_output_format": "webm",
     }
     _DEFAULT_AUDIO_OPTS: Final[Mapping[str, Any]] = {

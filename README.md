@@ -11,6 +11,7 @@ from [USDB (UltraStar Deluxe Database)](https://usdb.animux.de/).
 The tool takes `.txt` song files from USDB as input, automatically downloads the
 corresponding audio and video files from YouTube, groups all related assets into a single
 song folder, and searches for a cover in your browser.
+Video downloads require a compatible WebM source; songs without one are reported as failed.
 
 <p align="center">
     <img

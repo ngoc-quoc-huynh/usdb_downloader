@@ -55,7 +55,7 @@ async def test_download_video_correctly(
     mock_yt_dlp.assert_called_once()
     args, _ = mock_yt_dlp.call_args
     opts = args[0]
-    assert opts["format"] == "bestvideo[ext=webm]/bestvideo"
+    assert opts["format"] == "bestvideo[ext=webm]"
     assert opts["merge_output_format"] == "webm"
     assert opts["outtmpl"] == f"{output_path}.%(ext)s"
 
