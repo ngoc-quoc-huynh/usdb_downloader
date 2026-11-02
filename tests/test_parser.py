@@ -266,6 +266,29 @@ def test_parse_file_overwrites_existing_headers(
     )
 
 
+@pytest.mark.parametrize("video_gap_first", [True, False])
+def test_parse_file_preserves_video_gap(
+    parser: Parser,
+    input_path: Path,
+    video_gap_first: bool,
+) -> None:
+    video_header = "#VIDEO:v=dQw4w9WgXcQ"
+    video_gap_header = "#VIDEOGAP:0"
+    headers = (
+        [video_gap_header, video_header]
+        if video_gap_first
+        else [video_header, video_gap_header]
+    )
+    test_file_path = input_path / "Test - My Song.txt"
+    _create_test_file(path=test_file_path, content="\n".join(headers))
+
+    file = parser._parse_file(test_file_path)
+
+    assert file is not None
+    assert file.video_id == "dQw4w9WgXcQ"
+    assert file.headers["VIDEOGAP"] == "0"
+
+
 def test_parse_file_returns_none_when_video_id_is_missing(
     parser: Parser,
     input_path: Path,

@@ -72,7 +72,7 @@ class Parser:
                     continue
 
                 match line:
-                    case l if l.startswith("#VIDEO"):
+                    case l if l.startswith("#VIDEO:"):
                         video_id = self._extract_video_id(l)
                     case s if s.startswith("#"):
                         key, _, value = s[1:].partition(":")
