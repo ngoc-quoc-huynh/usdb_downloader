@@ -179,10 +179,7 @@ async def test_run_waits_for_sibling_download_after_failure(
     sibling_finished = asyncio.Event()
     second_song_started = asyncio.Event()
 
-    original_print_song_start = mock_console.print_song_start
-
     def track_song_start(*, idx: int, total: int, name: str) -> None:
-        original_print_song_start(idx=idx, total=total, name=name)
         if idx == 2:
             second_song_started.set()
 
@@ -224,6 +221,47 @@ async def test_run_waits_for_sibling_download_after_failure(
     assert sibling_finished.is_set()
     assert second_song_started.is_set()
     mock_console.print_summary.assert_called_once_with(processed=1, failed=1)
+
+
+@pytest.mark.asyncio
+async def test_run_propagates_unexpected_error_after_sibling_finishes(
+    app: App,
+    sample_file: File,
+) -> None:
+    app._parser.iter_files = MagicMock(return_value=iter([sample_file]))
+    release_sibling = asyncio.Event()
+    sibling_started = asyncio.Event()
+    sibling_finished = asyncio.Event()
+
+    async def download_audio(*, video_id: str, output_path: Path) -> None:
+        raise RuntimeError("Unexpected download error")
+
+    async def download_video(*, video_id: str, output_path: Path) -> None:
+        sibling_started.set()
+        await release_sibling.wait()
+        sibling_finished.set()
+
+    app._youtube_downloader.download_audio = download_audio
+    app._youtube_downloader.download_video = download_video
+
+    run_task = asyncio.create_task(app.run())
+    try:
+        await asyncio.wait_for(sibling_started.wait(), timeout=1)
+        checkpoint = asyncio.Event()
+        asyncio.get_running_loop().call_soon(checkpoint.set)
+        await checkpoint.wait()
+        assert not run_task.done()
+    finally:
+        release_sibling.set()
+
+    try:
+        await run_task
+    except RuntimeError as error:
+        assert str(error) == "Unexpected download error"
+    else:
+        raise AssertionError("Unexpected download errors must propagate")
+
+    assert sibling_finished.is_set()
 
 
 @pytest.mark.asyncio
