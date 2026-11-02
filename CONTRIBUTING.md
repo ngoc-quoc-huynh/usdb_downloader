@@ -55,6 +55,13 @@ clearly and effectively.
 - **Explain use cases**: Share specific scenarios where your request would be useful.
 - **Be open to feedback**: Encourage discussion and be willing to refine your r.
 
+## Commit messages
+
+Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) for final squashed
+commits, using `type: summary` or `type(scope): summary`. Keep summaries short and imperative; add a
+scope when it helps identify the concern. Use `chore(deps)` for routine dependency upgrades. Mark
+breaking changes with `!` after the type or scope, or with a `BREAKING CHANGE:` footer.
+
 ---
 
 By following these guidelines and utilizing the provided templates, you contribute to a more organized and efficient
