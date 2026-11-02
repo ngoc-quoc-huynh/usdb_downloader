@@ -136,6 +136,36 @@ async def test_download_audio_raises_exception_on_download_error(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("filename", "expected_template_name"),
+    [
+        ("Artist - %(id)s", "Artist - %%(id)s"),
+        ("100% Song", "100%% Song"),
+    ],
+)
+async def test_download_video_escapes_percent_in_filename(
+    youtube_downloader: YoutubeDownloader,
+    mock_yt_dlp: MagicMock,
+    tmp_path: Path,
+    video_id: str,
+    filename: str,
+    expected_template_name: str,
+) -> None:
+    output_path = tmp_path / filename
+    yt_dlp_instance = mock_yt_dlp.return_value
+    yt_dlp_instance.__enter__.return_value = yt_dlp_instance
+
+    await youtube_downloader.download_video(
+        video_id=video_id,
+        output_path=output_path,
+    )
+
+    opts = mock_yt_dlp.call_args.args[0]
+    expected_outtmpl = f"{tmp_path / expected_template_name}.%(ext)s"
+    assert opts["outtmpl"] == expected_outtmpl
+
+
+@pytest.mark.asyncio
 async def test_download_video_with_complex_name(
     youtube_downloader: YoutubeDownloader,
     mock_yt_dlp: MagicMock,

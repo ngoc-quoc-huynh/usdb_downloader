@@ -92,9 +92,10 @@ class YoutubeDownloader:
         base_opts: Mapping[str, Any],
     ) -> None:
         url = cls._build_download_url(video_id)
+        output_template = str(output_path).replace("%", "%%") + ".%(ext)s"
         opts = {
             **base_opts,
-            "outtmpl": f"{output_path}.%(ext)s",
+            "outtmpl": output_template,
         }
 
         with YoutubeDL(cast("Any", opts)) as ydl:
