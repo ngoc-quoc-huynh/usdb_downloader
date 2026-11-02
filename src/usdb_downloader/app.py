@@ -56,7 +56,7 @@ class App:
                 with self._console.print_song_step_spinner(
                     f"Downloading audio and video (ID: {video_id})"
                 ):
-                    await asyncio.gather(
+                    results = await asyncio.gather(
                         self._youtube_downloader.download_audio(
                             video_id=video_id,
                             output_path=output_path,
@@ -65,7 +65,11 @@ class App:
                             video_id=video_id,
                             output_path=output_path,
                         ),
+                        return_exceptions=True,
                     )
+                    for result in results:
+                        if isinstance(result, BaseException):
+                            raise result
 
                 self._console.print_song_step(
                     f"Downloading audio and video (ID: {video_id})"

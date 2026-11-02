@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
@@ -154,6 +155,75 @@ async def test_run_with_youtube_downloader_exception(
         processed=0,
         failed=1,
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failed_download", ["audio", "video"])
+async def test_run_waits_for_sibling_download_after_failure(
+    app: App,
+    mock_console: MagicMock,
+    sample_file: File,
+    failed_download: str,
+) -> None:
+    second_file = File(
+        name="Test - Your Song",
+        video_id="eQw4w9WgXcQ",
+        headers={},
+        lyrics=[],
+    )
+    app._parser.iter_files = MagicMock(return_value=iter([sample_file, second_file]))
+    app._parser.write_file = MagicMock()
+
+    release_sibling = asyncio.Event()
+    sibling_started = asyncio.Event()
+    sibling_finished = asyncio.Event()
+    second_song_started = asyncio.Event()
+
+    original_print_song_start = mock_console.print_song_start
+
+    def track_song_start(*, idx: int, total: int, name: str) -> None:
+        original_print_song_start(idx=idx, total=total, name=name)
+        if idx == 2:
+            second_song_started.set()
+
+    mock_console.print_song_start.side_effect = track_song_start
+
+    async def download_audio(*, video_id: str, output_path: Path) -> None:
+        if video_id == sample_file.video_id:
+            if failed_download == "audio":
+                raise YoutubeDownloaderException("Audio failed")
+            sibling_started.set()
+            await release_sibling.wait()
+            sibling_finished.set()
+
+    async def download_video(*, video_id: str, output_path: Path) -> None:
+        if video_id == sample_file.video_id:
+            if failed_download == "video":
+                raise YoutubeDownloaderException("Video failed")
+            sibling_started.set()
+            await release_sibling.wait()
+            sibling_finished.set()
+
+    app._youtube_downloader.download_audio = download_audio
+    app._youtube_downloader.download_video = download_video
+
+    run_task = asyncio.create_task(app.run())
+    try:
+        await asyncio.wait_for(sibling_started.wait(), timeout=1)
+        checkpoint = asyncio.Event()
+        asyncio.get_running_loop().call_soon(checkpoint.set)
+        await checkpoint.wait()
+
+        assert not second_song_started.is_set()
+        assert not mock_console.print_summary.called
+        assert not run_task.done()
+    finally:
+        release_sibling.set()
+        await run_task
+
+    assert sibling_finished.is_set()
+    assert second_song_started.is_set()
+    mock_console.print_summary.assert_called_once_with(processed=1, failed=1)
 
 
 @pytest.mark.asyncio
