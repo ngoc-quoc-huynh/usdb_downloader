@@ -37,14 +37,22 @@ class App:
     async def run(self) -> None:
         logger.info("Starting application")
 
-        files = list(self._parser.iter_files())
+        failed = 0
+
+        def on_file_error(path: Path) -> None:
+            nonlocal failed
+            failed += 1
+            self._console.print_song_error(f"Failed to read input file {path.name}")
+
+        files = list(self._parser.iter_files(on_error=on_file_error))
 
         self._console.print_song_count(len(files))
         if not files:
+            if failed:
+                self._console.print_summary(processed=0, failed=failed)
             return
 
         processed = 0
-        failed = 0
 
         for idx, file in enumerate(files, 1):
             self._console.print_song_start(idx=idx, total=len(files), name=file.name)

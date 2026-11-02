@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from rich.console import Console as RichConsole
 from rich.live import Live
+from rich.markup import escape
 from rich.spinner import Spinner
 
 if TYPE_CHECKING:
@@ -42,7 +43,7 @@ class Console:
         self._print(f"  └─ [green]✓ {message}[/green]\n")
 
     def print_song_error(self, message: str) -> None:
-        self._print(f"  └─ [red]✗ {message}[/red]\n")
+        self._print(f"  └─ [red]✗ {escape(message)}[/red]\n")
 
     def print_summary(self, processed: int, failed: int) -> None:
         self._print("[bold]Summary:[/bold]")

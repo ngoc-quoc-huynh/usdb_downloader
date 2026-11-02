@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Final
 from usdb_downloader.models import File
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import Callable, Generator
     from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,11 @@ class Parser:
             self._output_dir,
         )
 
-    def iter_files(self) -> Generator[File]:
+    def iter_files(
+        self,
+        *,
+        on_error: Callable[[Path], None] | None = None,
+    ) -> Generator[File]:
         if not self._input_dir.exists():
             logger.warning("Input directory %s is missing", self._input_dir)
             return
@@ -35,7 +39,13 @@ class Parser:
 
         count = 0
         for path in self._input_dir.glob("*.txt"):
-            song = self._parse_file(path)
+            try:
+                song = self._parse_file(path)
+            except (OSError, UnicodeError) as error:
+                logger.warning("Failed to read file %s: %s", path, error)
+                if on_error is not None:
+                    on_error(path)
+                continue
             if song:
                 yield song
                 count += 1

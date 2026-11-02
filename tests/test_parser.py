@@ -67,6 +67,35 @@ def test_iter_files_yields_single_file(parser: Parser, input_path: Path) -> None
     )
 
 
+def test_iter_files_reports_decode_error_and_continues(
+    parser: Parser,
+    input_path: Path,
+) -> None:
+    unreadable_path = input_path / "Unreadable.txt"
+    unreadable_path.write_bytes(b"\xff")
+    valid_path = input_path / "Valid.txt"
+    _create_test_file(valid_path, "#VIDEO:v=dQw4w9WgXcQ")
+    errors: list[Path] = []
+
+    files = list(parser.iter_files(on_error=errors.append))
+
+    assert [file.name for file in files] == ["Valid"]
+    assert errors == [unreadable_path]
+
+
+def test_iter_files_continues_after_read_error_without_callback(
+    parser: Parser,
+    input_path: Path,
+) -> None:
+    (input_path / "Unreadable.txt").mkdir()
+    valid_path = input_path / "Valid.txt"
+    _create_test_file(valid_path, "#VIDEO:v=dQw4w9WgXcQ")
+
+    files = list(parser.iter_files())
+
+    assert [file.name for file in files] == ["Valid"]
+
+
 def test_iter_files_yields_multiple_files(parser: Parser, input_path: Path) -> None:
     _create_test_file(
         path=input_path / "Test - My Song.txt",

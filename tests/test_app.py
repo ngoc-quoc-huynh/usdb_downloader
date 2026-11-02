@@ -80,6 +80,50 @@ async def test_run_with_no_files(
 
 
 @pytest.mark.asyncio
+async def test_run_reports_unreadable_file_and_processes_valid_song(
+    app: App,
+    input_dir: Path,
+    mock_console: MagicMock,
+) -> None:
+    input_dir.mkdir()
+    (input_dir / "[bold]Unreadable.txt").write_bytes(b"\xff")
+    (input_dir / "Valid.txt").write_text(
+        "#VIDEO:v=dQw4w9WgXcQ\n",
+        encoding="utf-8",
+    )
+    app._parser.write_file = MagicMock()
+    app._youtube_downloader.download_audio = AsyncMock()
+    app._youtube_downloader.download_video = AsyncMock()
+
+    await app.run()
+
+    mock_console.print_song_count.assert_called_once_with(1)
+    mock_console.print_song_error.assert_called_once_with(
+        "Failed to read input file [bold]Unreadable.txt"
+    )
+    mock_console.print_song_success.assert_called_once()
+    mock_console.print_summary.assert_called_once_with(processed=1, failed=1)
+
+
+@pytest.mark.asyncio
+async def test_run_summarizes_unreadable_file_when_all_inputs_fail(
+    app: App,
+    input_dir: Path,
+    mock_console: MagicMock,
+) -> None:
+    input_dir.mkdir()
+    (input_dir / "Unreadable.txt").write_bytes(b"\xff")
+
+    await app.run()
+
+    mock_console.print_song_count.assert_called_once_with(0)
+    mock_console.print_song_error.assert_called_once_with(
+        "Failed to read input file Unreadable.txt"
+    )
+    mock_console.print_summary.assert_called_once_with(processed=0, failed=1)
+
+
+@pytest.mark.asyncio
 async def test_run_with_single_file_success(
     app: App,
     mock_console: MagicMock,
