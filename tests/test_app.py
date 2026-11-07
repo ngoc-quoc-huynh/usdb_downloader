@@ -229,7 +229,7 @@ async def test_run_waits_for_sibling_download_after_failure(
 
     mock_console.print_song_start.side_effect = track_song_start
 
-    async def download_audio(*, video_id: str, output_path: Path) -> None:
+    async def download_audio(video_id: str, output_path: Path) -> None:
         if video_id == sample_file.video_id:
             if failed_download == "audio":
                 raise YoutubeDownloaderException("Audio failed")
@@ -237,7 +237,7 @@ async def test_run_waits_for_sibling_download_after_failure(
             await release_sibling.wait()
             sibling_finished.set()
 
-    async def download_video(*, video_id: str, output_path: Path) -> None:
+    async def download_video(video_id: str, output_path: Path) -> None:
         if video_id == sample_file.video_id:
             if failed_download == "video":
                 raise YoutubeDownloaderException("Video failed")
@@ -277,10 +277,10 @@ async def test_run_propagates_unexpected_error_after_sibling_finishes(
     sibling_started = asyncio.Event()
     sibling_finished = asyncio.Event()
 
-    async def download_audio(*, video_id: str, output_path: Path) -> None:
+    async def download_audio(video_id: str, output_path: Path) -> None:
         raise RuntimeError("Unexpected download error")
 
-    async def download_video(*, video_id: str, output_path: Path) -> None:
+    async def download_video(video_id: str, output_path: Path) -> None:
         sibling_started.set()
         await release_sibling.wait()
         sibling_finished.set()
