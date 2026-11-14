@@ -16,5 +16,6 @@
       "before 7am on monday"
     ]
   },
-  "rebaseWhen": "never"
+  "rebaseWhen": "never",
+  "enabled": false
 }
